@@ -18,7 +18,11 @@
 ## Installation
 
 - pip install python-can
-- To run a script: ./run.sh [script.py]
+- To run a script:
+
+```
+./run.sh [script.py]
+```
 
 - **Note:** There is a [setup.sh] script provided
 
@@ -26,5 +30,5 @@
 
 ## Installation
 
-- Download CANlib through Kvaser's website
-- https://kvaser.com/single-download/?download_id=47112
+- Download CANlib through Kvaser's website:
+  - https://kvaser.com/single-download/?download_id=47112
