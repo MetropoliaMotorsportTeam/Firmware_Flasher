@@ -5,10 +5,13 @@
 # General setup
 
 - Set up a python environment inside SocketCAN or CANlib
-  - python -m venv venv
+  ```
+  python -m venv venv
+  ```
 - Activate the environment
-  - source /venv/bin/activate
-- Install the respective packages
+  ```
+  source /venv/bin/activate
+  ```
 
 # SocketCAN
 
