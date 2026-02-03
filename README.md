@@ -8,14 +8,14 @@
 
 # General Setup
 
-- Set up a python environment inside SocketCAN or CANlib directory and activate it
+- Set up a python environment inside SocketCAN or CANlib directory and activate it:
 
 ```bash
 python -m venv venv
 source venv/bin/activate
 ```
 
-- Install the necessary libraries using pip
+- Install the necessary libraries using pip:
 
 ```bash
 pip install -r requirements.txt
@@ -25,7 +25,7 @@ pip install -r requirements.txt
 
 ## Usage
 
-- There is a provided bash script SocketCAN
+- There is a provided bash script for SocketCAN:
 
 ```bash
 ./run.sh [script.py]
@@ -43,7 +43,7 @@ pip install -r requirements.txt
 - Optional:
   - [Kvaser CanKing](https://kvaser.com/single-download/?download_id=486884)
 
-# Explanation of the files
+# Explanation for each Python program
 
 ```bash
 'detect_channels_[...].py': Used for detecting channels, testing the setup
