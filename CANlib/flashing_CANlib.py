@@ -4,11 +4,6 @@ import time
 from canlib import canlib
 
 # ---------------- Configuration ----------------
-
-# TODO: Add proper CAN filters
-# TODO: Add sequence numbers
-# TODO: Or redesign ACK/NACK so retries are bulletproof
-
 CHANNEL_NUMBER = 0
 BAUD_RATE = canlib.canBITRATE_1M
 
@@ -214,7 +209,9 @@ def flash_stm32_protocol(channel, baud, file_path):
 
 if __name__ == "__main__":
     FILE_PATH = input("Path to .bin file: ").strip()
-    FILE_PATH = "Application.bin"
+
+    while not os.path.exists(FILE_PATH):
+        FILE_PATH = input("Enter valid .bin file: ").strip()
 
     try:
         MAX_SIZE = int(input("Max size (KB): ")) << 10

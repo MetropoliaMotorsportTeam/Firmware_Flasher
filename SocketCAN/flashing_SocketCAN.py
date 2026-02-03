@@ -4,10 +4,8 @@ import time
 import can
 
 # ---------------- Configuration ----------------
-
-# Arch Linux uses 'can0' via SocketCAN
 CHANNEL_NUMBER = "can0"
-BAUD_RATE = 1000000  # 1Mbps
+BAUD_RATE = 1000000
 
 CMD_ENTER_BOOTLOADER = 0x02
 CMD_DATA_CHUNK = 0x03
@@ -30,7 +28,6 @@ def send_message(bus, can_id, data=None):
     if data is None:
         data = [0x00]
     try:
-        # Replaced ch.write with bus.send
         msg = can.Message(arbitration_id=can_id, data=data, is_extended_id=False)
         bus.send(msg)
         return True
@@ -42,7 +39,6 @@ def send_message(bus, can_id, data=None):
 def flush_rx(bus):
     try:
         while True:
-            # Replaced ch.read(0) with bus.recv(0)
             if bus.recv(timeout=0) is None:
                 break
     except Exception:
@@ -125,7 +121,6 @@ def load_bin_file(file_path):
 def flash_stm32_protocol(channel, baud, file_path):
     print("\n--- STM32 CAN Flash Tool ---")
 
-    # Open CAN - Replaced canlib calls with python-can SocketCAN
     try:
         bus = can.interface.Bus(channel=channel, interface="socketcan")
     except Exception as e:
@@ -206,13 +201,14 @@ def flash_stm32_protocol(channel, baud, file_path):
             print("WARNING: No final ACK")
 
     finally:
-        # Replaced busOff with shutdown
         bus.shutdown()
 
 
 if __name__ == "__main__":
-    # FILE_PATH = input("Path to .bin file: ").strip()
-    FILE_PATH = "Application.bin"
+    FILE_PATH = input("Path to .bin file: ").strip()
+
+    while not os.path.exists(FILE_PATH):
+        FILE_PATH = input("Enter valid .bin file: ").strip()
 
     try:
         MAX_SIZE = int(input("Max size (KB): ")) << 10

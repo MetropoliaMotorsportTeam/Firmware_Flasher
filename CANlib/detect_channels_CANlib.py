@@ -15,11 +15,14 @@ def detect_channel(channel, baud):
         for channel in range(0, num_channels):
             chdata = canlib.ChannelData(channel)
 
-            print("%d. %s (%s / %s)" % (
-                channel,
-                chdata.channel_name,
-                chdata.card_upc_no,
-                chdata.card_serial_no)
+            print(
+                "%d. %s (%s / %s)"
+                % (
+                    channel,
+                    chdata.channel_name,
+                    chdata.card_upc_no,
+                    chdata.card_serial_no,
+                )
             )
         return True
 
@@ -29,11 +32,8 @@ def detect_channel(channel, baud):
 
 
 if __name__ == "__main__":
-    # for channel in CHANNEL_NUMS:
-    #     if detect_channel(channel, BAUD_RATE):
-    #         print(f"found channel {channel}")
-    #     else:
-    #         print(f"{channel} does not exist")
-    # Try channel 1 if channel 0 does not work
-    detect_channel(0, BAUD_RATE)
-
+    for channel in CHANNEL_NUMS:
+        if detect_channel(channel, BAUD_RATE):
+            print(f"found channel {channel}")
+        else:
+            print(f"{channel} does not exist")
