@@ -11,14 +11,14 @@
 - Set up a python environment inside SocketCAN or CANlib directory and activate it
 
 ```bash
-  python -m venv venv
-  source venv/bin/activate
+python -m venv venv
+source venv/bin/activate
 ```
 
 - Install the necessary libraries using pip
 
 ```bash
-  pip install -r requirements.txt
+pip install -r requirements.txt
 ```
 
 # SocketCAN
