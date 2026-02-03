@@ -8,11 +8,11 @@
 
 # General Setup
 
-- Set up a python environment inside SocketCAN/ or CANlib/ directory and activate it
+- Set up a python environment inside SocketCAN or CANlib directory and activate it
 
 ```bash
   python -m venv venv
-  source /venv/bin/activate
+  source venv/bin/activate
 ```
 
 - Install the necessary libraries using pip
