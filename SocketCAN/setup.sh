@@ -1,5 +1,7 @@
-#!/bin/bash
+#!/usr/bin/env bash
+set -e
 
-python -m venv venv
-source "$(pwd)"/venv/bin/activate
-pip install python-can
+python3 -m venv venv
+source venv/bin/activate
+python -m pip install --upgrade pip
+python -m pip install -r requirements.txt
