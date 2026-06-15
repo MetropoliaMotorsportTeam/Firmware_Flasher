@@ -4,7 +4,7 @@ import time
 
 CHANNEL_NUMBER = 0
 BAUD_RATE = canlib.canBITRATE_1M
-CMD_CHANGE_CONF = 0x21
+CMD_CHANGE_CONF = 0x76C
 DATA_TRIGGER = 1
 RESP_ACK = 0x12
 
@@ -19,7 +19,7 @@ def run_test():
         print(f"Failed to open CAN: {e}")
         return
 
-    print(f"Sending Config Change Command (ID: 0x{CMD_CHANGE_CONF})")
+    print(f"Sending Config Change Command ID: {hex(CMD_CHANGE_CONF)})")
     ch.write(CMD_CHANGE_CONF, [DATA_TRIGGER], flag=0)
     print("Command sent. Waiting for BMS to send response")
 

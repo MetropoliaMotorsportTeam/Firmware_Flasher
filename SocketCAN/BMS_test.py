@@ -3,8 +3,8 @@ import time
 
 
 CHANNEL = "can0"
-BAUD_RATE = 1000000
-CMD_CHANGE_CONF = 0x21
+BAUD_RATE = 1000000  # need to mnaually set baudrate when running on linux
+CMD_CHANGE_CONF = 0x76C
 DATA_TRIGGER = 1
 RESP_ACK = 0x12
 
@@ -20,7 +20,7 @@ def run_test():
         print(f"Failed to open CAN interface: {e}")
         return
 
-    print(f"Sending Config Change Command (ID: 0x{CMD_CHANGE_CONF})")
+    print(f"Sending Config Change Command ID: {hex(CMD_CHANGE_CONF)})")
 
     msg = can.Message(
         arbitration_id=CMD_CHANGE_CONF, data=[DATA_TRIGGER], is_extended_id=False
