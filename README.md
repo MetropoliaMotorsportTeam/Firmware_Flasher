@@ -18,7 +18,8 @@ source venv/bin/activate
 - Install the necessary libraries using pip:
 
 ```bash
-pip install -r requirements.txt
+python -m pip install --upgrade pip
+python -m pip install -r requirements.txt
 ```
 
 # SocketCAN
