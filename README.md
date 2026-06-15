@@ -34,15 +34,23 @@ python -m pip install -r requirements.txt
 
 - There is also a provided [setup.sh] script
 
-# CANlib
+# CANlib (For Windows)
 
-## Additional Setup
+## Windows Setup
 
 - Download CANlib and Kvaser Drivers through Kvaser's website:
   - [Kvaser Drivers for Windows](https://kvaser.com/single-download/?download_id=47112)
   - [Kvaser CANlib SDK](https://kvaser.com/single-download/?download_id=47105)
 - Optional:
   - [Kvaser CanKing](https://kvaser.com/single-download/?download_id=486884)
+
+## Usage
+
+- Simply run the script after installing all the prerequisites
+
+```
+python [script.py]
+```
 
 # Explanation for each Python program
 
