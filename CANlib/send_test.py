@@ -4,8 +4,8 @@ import time
 
 CHANNEL_NUMBER = 0
 BAUD_RATE = canlib.canBITRATE_1M
-CMD_CHANGE_CONF = 0x76C
-DATA_TRIGGER = 1
+CMD_TO_SEND = 0x76C
+DATA_TRIGGER = [1]
 RESP_ACK = 0x12
 
 
@@ -19,9 +19,9 @@ def run_test():
         print(f"Failed to open CAN: {e}")
         return
 
-    print(f"Sending Config Change Command ID: {hex(CMD_CHANGE_CONF)})")
-    ch.write(CMD_CHANGE_CONF, [DATA_TRIGGER], flag=0)
-    print("Command sent. Waiting for BMS to send response")
+    print(f"Sending Command, ID: {hex(CMD_TO_SEND)}")
+    ch.write(CMD_TO_SEND, DATA_TRIGGER, flag=0)
+    print("Command sent. Waiting for response.")
 
     timeout = time.time() + 5.0
     success = False
@@ -31,7 +31,7 @@ def run_test():
             # Short poll for messages
             msg = ch.read(timeout=100)
             if msg.id == RESP_ACK:
-                print("SUCCESS: Received ACK from BMS!")
+                print("SUCCESS: Received ACK.")
                 print(f"Data received: {list(msg.data)}")
                 success = True
                 break
@@ -42,7 +42,7 @@ def run_test():
             break
 
     if not success:
-        print("FAILED: No response from BMS.")
+        print("FAILED: No response.")
 
     ch.busOff()
     ch.close()
