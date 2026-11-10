@@ -15,3 +15,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   interface for CAN backends.
 - SocketCAN backend implementation. `recv` wraps CAN errors in
   `CanBackendError`.
+- CANlib backend implementation, using CANlib's own bitrate constants
+  instead of raw baud values for `setBusParams`.
