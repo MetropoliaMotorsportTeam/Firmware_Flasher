@@ -22,3 +22,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   send so a stale response isn't mistaken for the next chunk's ack.
 - TOML configuration file support (`flasher/config.py`), merged with
   CLI flags (CLI wins).
+- Non-interactive CLI entry point (`flash`). Missing required
+  configuration, an invalid backend, a missing or malformed `--config`
+  file, and a CAN error during a flash all print a clear error.
