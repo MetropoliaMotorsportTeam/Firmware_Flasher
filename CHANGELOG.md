@@ -13,3 +13,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   duplicated per backend.
 - `CanBackend` abstraction defining a common send/recv/shutdown
   interface for CAN backends.
+- SocketCAN backend implementation. `recv` wraps CAN errors in
+  `CanBackendError`.
