@@ -20,3 +20,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `FlashSession`, implementing the retry/ACK state machine against the
   bootloader protocol. Pending frames are flushed before each chunk
   send so a stale response isn't mistaken for the next chunk's ack.
+- TOML configuration file support (`flasher/config.py`), merged with
+  CLI flags (CLI wins).
