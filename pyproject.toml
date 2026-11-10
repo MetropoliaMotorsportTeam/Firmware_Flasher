@@ -1,0 +1,27 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "stm32-firmware-flasher"
+dynamic = ["version"]
+description = "CAN-based firmware flashing tool for STM32 boards"
+requires-python = ">=3.11"
+dependencies = []
+
+[project.optional-dependencies]
+socketcan = ["python-can==4.6.1"]
+canlib = ["canlib==1.31.107"]
+test = ["pytest==9.2.0", "pytest-cov==7.1.0"]
+
+[project.scripts]
+flash = "flasher.cli:main"
+
+[tool.setuptools.packages.find]
+include = ["flasher*"]
+
+[tool.setuptools.dynamic]
+version = {attr = "flasher.__version__"}
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

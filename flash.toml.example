@@ -1,0 +1,8 @@
+# Copy this file to flash.toml and adjust for your setup, or pass
+# individual values as CLI flags (CLI flags override this file).
+
+backend = "socketcan"   # "socketcan" or "canlib"
+port = "can0"           # SocketCAN interface name, or CANlib channel number
+baud = 1000000          # bitrate in bits/second
+retries = 5             # max retries per chunk before giving up
+timeout_ms = 5000       # response timeout per message, in milliseconds

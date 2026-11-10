@@ -25,3 +25,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Non-interactive CLI entry point (`flash`). Missing required
   configuration, an invalid backend, a missing or malformed `--config`
   file, and a CAN error during a flash all print a clear error.
+- `pyproject.toml` packaging with per-backend optional dependency
+  groups (`socketcan`, `canlib`, `test`).
