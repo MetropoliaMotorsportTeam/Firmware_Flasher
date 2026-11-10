@@ -17,3 +17,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   `CanBackendError`.
 - CANlib backend implementation, using CANlib's own bitrate constants
   instead of raw baud values for `setBusParams`.
+- `FlashSession`, implementing the retry/ACK state machine against the
+  bootloader protocol. Pending frames are flushed before each chunk
+  send so a stale response isn't mistaken for the next chunk's ack.
