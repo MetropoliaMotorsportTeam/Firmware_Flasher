@@ -11,3 +11,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Shared protocol module (`flasher/protocol.py`) for firmware chunking
   and CRC computation, used by both backends instead of being
   duplicated per backend.
+- `CanBackend` abstraction defining a common send/recv/shutdown
+  interface for CAN backends.
