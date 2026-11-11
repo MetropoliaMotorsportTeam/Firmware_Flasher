@@ -27,3 +27,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   file, and a CAN error during a flash all print a clear error.
 - `pyproject.toml` packaging with per-backend optional dependency
   groups (`socketcan`, `canlib`, `test`).
+- Host-side test suite (`pytest`) covering chunking, CRC, the
+  retry/ACK state machine, and CLI error handling, with no hardware
+  required.
+- CI workflow running the test suite with coverage reporting on every
+  push and pull request.
