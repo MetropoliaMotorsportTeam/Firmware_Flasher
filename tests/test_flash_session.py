@@ -3,6 +3,7 @@ import pytest
 from flasher.backends.base import CanFrame
 from flasher.protocol import (
     CMD_DATA_CHUNK,
+    CMD_DONE_FLASHING,
     FlashSession,
     FlashSessionError,
     RESP_READY_ACK,
@@ -62,6 +63,28 @@ def test_run_raises_when_no_alive_ack_after_flashing():
     session = FlashSession(backend, app_alive_id=2000, timeout_ms=10)
     with pytest.raises(FlashSessionError, match="alive"):
         session.run(b"\x01")
+
+
+def test_run_computes_crc_over_padded_firmware_not_raw():
+    firmware = b"\x01\x02\x03"  # not a multiple of CHUNK_SIZE (8)
+    padded = firmware + b"\xff" * 5
+    from flasher.protocol import compute_crc
+
+    expected_crc = compute_crc(padded)
+
+    backend = FakeBackend(
+        [
+            CanFrame(RESP_READY_ACK, b""),  # enter bootloader
+            CanFrame(RESP_READY_ACK, b""),  # chunk ack
+            CanFrame(2000, b""),  # app alive-ack
+        ]
+    )
+    session = FlashSession(backend, app_alive_id=2000)
+    session.run(firmware)
+
+    done_call = [call for call in backend.sent if call[0] == CMD_DONE_FLASHING][0]
+    sent_crc_bytes = bytes(done_call[1][2:6])
+    assert sent_crc_bytes == expected_crc.to_bytes(4, "big")
 
 
 def test_run_flushes_pending_frames_before_each_chunk_send():

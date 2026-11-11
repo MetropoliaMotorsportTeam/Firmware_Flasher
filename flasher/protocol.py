@@ -66,8 +66,9 @@ class FlashSession:
         if self._wait_for({RESP_READY_ACK}, self._timeout_ms) != RESP_READY_ACK:
             raise FlashSessionError("no response from bootloader")
 
-        running_crc = compute_crc(firmware)
-        for chunk in chunk_firmware(firmware, CHUNK_SIZE):
+        chunks = chunk_firmware(firmware, CHUNK_SIZE)
+        running_crc = compute_crc(b"".join(chunks))
+        for chunk in chunks:
             acked = False
             for _ in range(self._max_retries):
                 self._flush()

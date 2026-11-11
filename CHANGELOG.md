@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [0.1.0] - 2026-11-11
 
 ### Added
 - Shared protocol module (`flasher/protocol.py`) for firmware chunking
@@ -32,3 +32,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   required.
 - CI workflow running the test suite with coverage reporting on every
   push and pull request.
+
+### Fixed
+- CRC32 is now computed over the padded firmware data (matching what the
+  bootloader actually writes and verifies), instead of the raw file,
+  which caused a false CRC mismatch for any firmware whose size wasn't a
+  multiple of 8 bytes.
