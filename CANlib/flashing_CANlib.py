@@ -56,6 +56,8 @@ def wait_app(ch, timeout_ms):
             if msg.id not in VALID_IDS:
                 continue
 
+            if msg.id == RESP_READY_ACK:
+                return "ACK"
             elif msg.id == TEST_ID:
                 return "ACK"
             elif msg.id == RESP_RETRY_NACK:
@@ -146,7 +148,7 @@ def flash_stm32_protocol(channel, baud, file_path):
         # ---- Enter Bootloader ----
         print("\n-> Entering Bootloader...")
         send_time = time.time()
-        send_message(ch, CMD_ENTER_BOOTLOADER)
+        send_message(ch, CMD_ENTER_BOOTLOADER, [1])
 
         if wait_for_response(ch, send_time, 5000) != "ACK":
             print("ERROR: No bootloader response")
