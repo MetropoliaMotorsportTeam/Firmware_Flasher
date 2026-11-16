@@ -7,12 +7,13 @@ from canlib import canlib
 CHANNEL_NUMBER = 0
 BAUD_RATE = canlib.canBITRATE_1M
 
-CMD_ENTER_BOOTLOADER = 0x02
-CMD_DATA_CHUNK = 0x03
-CMD_DONE_FLASHING = 0x04
+CMD_ENTER_BOOTLOADER = 2044
+CMD_ERASE_FLASH = 2045
+CMD_DATA_CHUNK = 2046
+CMD_DONE_FLASHING = 2047
 
-RESP_READY_ACK = 0x7FE  # 2046
-RESP_RETRY_NACK = 0x7FF  # 2047
+RESP_READY_ACK = 2044
+RESP_RETRY_NACK = 2043  
 TEST_ID = 0x7D0  # 2000
 VALID_IDS = {RESP_READY_ACK, RESP_RETRY_NACK, TEST_ID}
 
@@ -152,6 +153,14 @@ def flash_stm32_protocol(channel, baud, file_path):
             return
 
         print("<- Bootloader Ready")
+
+        # ---- Erase Current Firmware ----
+        print("\n--- Erase Target ---")
+        send_message(ch, CMD_ERASE_FLASH)
+        send_time = time.time()
+        if wait_for_response(ch, send_time, 5000) != "ACK":
+            print("ERROR: Erase failed")
+            return
 
         # ---- Send Firmware ----
         print("\n--- Flashing ---")

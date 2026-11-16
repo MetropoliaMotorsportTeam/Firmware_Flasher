@@ -5,9 +5,9 @@ import time
 CHANNEL_NUMBER = 0
 BAUD_RATE = canlib.canBITRATE_1M
 
-CMD_ENTER_BOOTLOADER = 0x02  # ID to trigger the jump
-DATA_TRIGGER = 0xFF  # Data byte to trigger the jump logic
-RESP_ACK = 0x7FE  # (2046) The ID the APP sends upon successful start
+CMD_ENTER_BOOTLOADER = 2043  # ID to trigger the jump
+DATA_TRIGGER = 1  # Data byte to trigger the jump logic
+RESP_ACK = 2043  # (2046) The ID the APP sends upon successful start
 
 
 def run_test():
