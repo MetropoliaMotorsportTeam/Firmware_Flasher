@@ -8,8 +8,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- `can-diag` diagnostics command with `channels`, `listen`, and `probe`
+  subcommands for inspecting the bus without flashing.
 - `flash` prints each stage, the CRC and chunk count, and a progress line
   per chunk. `--verbose` also prints every CAN frame sent and received.
+- `can-diag probe --app-id` overrides the application alive ACK ID.
+- `can-diag channels --verbose` shows the full `ip link` output.
+- README sections for bringing up a SocketCAN interface and for
+  troubleshooting probe failures.
 
 ## [0.1.0] - 2026-11-11
 

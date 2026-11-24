@@ -46,6 +46,40 @@ retries = 5
 timeout_ms = 5000
 ```
 
+## Bringing up a SocketCAN interface
+
+Linux only. Run once per boot, replacing `can0` and the bitrate as needed:
+
+```bash
+sudo ip link set can0 down
+sudo ip link set can0 type can bitrate 1000000
+sudo ip link set can0 up
+```
+
+## Diagnostics
+
+`can-diag` is a read-only helper for checking the bus. It does not flash anything.
+
+```bash
+can-diag channels --backend socketcan            # list CAN interfaces and their state
+can-diag channels --backend socketcan --verbose  # also show the full ip link output
+can-diag channels --backend canlib               # list Kvaser channels
+can-diag listen --backend socketcan --port can0 --baud 1000000             # print every frame until Ctrl-C
+can-diag probe --backend socketcan --port can0 --baud 1000000 --duration 5 # trigger the jump and wait for the app's ACK
+```
+
+`probe` waits for the application's alive ACK. Its ID defaults to the value
+for the chosen backend; override it with `--app-id` (for example `--app-id 0x7D0`).
+
+## Troubleshooting probe failures
+
+If `can-diag probe` reports no alive ACK, check these in order:
+
+1. The bootloader's jump to the application failed.
+2. The application's vector table at `APP_ADDR` is invalid or empty.
+3. The application did not start its FDCAN peripheral.
+4. The bitrate or acceptance filters do not match the bus.
+
 ## Development
 
 ```bash
