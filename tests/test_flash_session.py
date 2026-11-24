@@ -117,3 +117,41 @@ def test_run_discards_a_stale_pending_frame_before_chunk_send():
     session.run(b"\x01\x02")
     assert backend.pending == []
     assert backend.responses == []
+
+
+def test_run_logs_stages_crc_and_progress():
+    backend = FakeBackend(
+        [
+            CanFrame(RESP_READY_ACK, b""),
+            CanFrame(RESP_READY_ACK, b""),
+            CanFrame(2000, b""),
+        ]
+    )
+    lines = []
+    session = FlashSession(backend, app_alive_id=2000, log=lines.append)
+    session.run(b"\x01\x02")
+
+    assert lines[0].startswith("CRC32 0x")
+    assert "1 chunks" in lines[0]
+    assert "entering bootloader" in lines
+    assert "bootloader ready" in lines
+    assert "progress 1/1" in lines
+    assert "sending done payload" in lines
+    assert lines[-1] == "application alive ACK received"
+
+
+def test_run_logs_each_failed_chunk_attempt_as_a_retry():
+    backend = FakeBackend(
+        [
+            CanFrame(RESP_READY_ACK, b""),
+            CanFrame(RESP_RETRY_NACK, b""),
+            CanFrame(RESP_READY_ACK, b""),
+            CanFrame(2000, b""),
+        ]
+    )
+    lines = []
+    session = FlashSession(backend, app_alive_id=2000, log=lines.append)
+    session.run(b"\x01\x02")
+
+    assert "retry chunk 1/1 (1/5)" in lines
+    assert "progress 1/1" in lines

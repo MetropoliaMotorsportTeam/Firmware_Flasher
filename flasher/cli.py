@@ -3,7 +3,7 @@ import os
 import sys
 import tomllib
 
-from flasher.backends.base import CanBackend, CanBackendError
+from flasher.backends.base import CanBackend, CanBackendError, CanFrame
 from flasher.backends.socketcan import SocketCanBackend
 from flasher.config import FlashConfig, load_config_file, merge_configs
 from flasher.protocol import FlashSession, FlashSessionError
@@ -23,16 +23,35 @@ def build_arg_parser() -> argparse.ArgumentParser:
     parser.add_argument("--retries", type=int)
     parser.add_argument("--timeout-ms", type=int, dest="timeout_ms")
     parser.add_argument("--config")
+    parser.add_argument("--verbose", action="store_true", help="print every CAN frame sent and received")
     parser.add_argument("firmware_path")
     return parser
 
 
-def _build_backend(backend_name: str, port: str, baud: int) -> CanBackend:
+def build_backend(backend_name: str, port: str, baud: int) -> CanBackend:
     if backend_name == "socketcan":
         return SocketCanBackend(channel=port, baud=baud)
     from flasher.backends.canlib import CanlibBackend  # pragma: no cover
 
     return CanlibBackend(channel=int(port), baud=baud)  # pragma: no cover
+
+
+class _VerboseBackend(CanBackend):
+    def __init__(self, inner: CanBackend):
+        self._inner = inner
+
+    def send(self, can_id: int, data: bytes) -> bool:
+        print(f"tx id=0x{can_id:X} data={data.hex(' ').upper()}")
+        return self._inner.send(can_id, data)
+
+    def recv(self, timeout_s: float) -> CanFrame | None:
+        frame = self._inner.recv(timeout_s)
+        if frame is not None:
+            print(f"rx id=0x{frame.can_id:X} data={frame.data.hex(' ').upper()}")
+        return frame
+
+    def shutdown(self) -> None:
+        self._inner.shutdown()
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -92,10 +111,12 @@ def main(argv: list[str] | None = None) -> int:
         return 1
 
     try:
-        backend = _build_backend(config.backend, config.port, config.baud)
+        backend = build_backend(config.backend, config.port, config.baud)
     except CanBackendError as e:
         print(f"error: could not open CAN interface: {e}", file=sys.stderr)
         return 1
+    if args.verbose:
+        backend = _VerboseBackend(backend)
 
     try:
         session = FlashSession(
@@ -103,6 +124,7 @@ def main(argv: list[str] | None = None) -> int:
             app_alive_id=APP_ALIVE_ID_BY_BACKEND[config.backend],
             max_retries=config.retries if config.retries is not None else 5,
             timeout_ms=config.timeout_ms if config.timeout_ms is not None else 5000,
+            log=print,
         )
         session.run(firmware)
     except (FlashSessionError, CanBackendError) as e:

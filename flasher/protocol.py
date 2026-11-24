@@ -1,5 +1,6 @@
 import time
 import zlib
+from collections.abc import Callable
 
 from flasher.backends.base import CanBackend
 
@@ -41,11 +42,13 @@ class FlashSession:
         app_alive_id: int,
         max_retries: int = MAX_RETRIES,
         timeout_ms: int = TIMEOUT_MS,
+        log: Callable[[str], None] | None = None,
     ):
         self._backend = backend
         self._app_alive_id = app_alive_id
         self._max_retries = max_retries
         self._timeout_ms = timeout_ms
+        self._log = log or (lambda message: None)
 
     def _flush(self) -> None:
         while self._backend.recv(timeout_s=0) is not None:
@@ -62,24 +65,31 @@ class FlashSession:
         return None
 
     def run(self, firmware: bytes) -> None:
+        chunks = chunk_firmware(firmware, CHUNK_SIZE)
+        running_crc = compute_crc(b"".join(chunks))
+        self._log(f"CRC32 0x{running_crc:08X}, {len(chunks)} chunks")
+
+        self._log("entering bootloader")
         self._backend.send(CMD_ENTER_BOOTLOADER, b"\x00")
         if self._wait_for({RESP_READY_ACK}, self._timeout_ms) != RESP_READY_ACK:
             raise FlashSessionError("no response from bootloader")
+        self._log("bootloader ready")
 
-        chunks = chunk_firmware(firmware, CHUNK_SIZE)
-        running_crc = compute_crc(b"".join(chunks))
-        for chunk in chunks:
+        for index, chunk in enumerate(chunks, start=1):
             acked = False
-            for _ in range(self._max_retries):
+            for failures in range(1, self._max_retries + 1):
                 self._flush()
                 self._backend.send(CMD_DATA_CHUNK, chunk)
                 resp = self._wait_for({RESP_READY_ACK, RESP_RETRY_NACK}, self._timeout_ms)
                 if resp == RESP_READY_ACK:
                     acked = True
                     break
+                self._log(f"retry chunk {index}/{len(chunks)} ({failures}/{self._max_retries})")
             if not acked:
                 raise FlashSessionError(f"chunk failed after {self._max_retries} retries")
+            self._log(f"progress {index}/{len(chunks)}")
 
+        self._log("sending done payload")
         done_payload = bytes(build_done_payload(running_crc))
         self._backend.send(CMD_DONE_FLASHING, done_payload)
         resp = self._wait_for({self._app_alive_id, RESP_RETRY_NACK}, self._timeout_ms)
@@ -87,3 +97,4 @@ class FlashSession:
             raise FlashSessionError("bootloader reported a CRC mismatch")
         if resp != self._app_alive_id:
             raise FlashSessionError("no alive-ACK from the application after flashing")
+        self._log("application alive ACK received")

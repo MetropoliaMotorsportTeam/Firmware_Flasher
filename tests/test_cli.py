@@ -179,3 +179,54 @@ def test_main_prints_success_message_on_a_full_successful_flash(capsys, tmp_path
     assert code == 0
     out = capsys.readouterr().out.lower()
     assert "success" in out
+
+
+def test_main_prints_stage_and_progress_lines(capsys, tmp_path, monkeypatch):
+    fw = tmp_path / "fw.bin"
+    fw.write_bytes(b"\x01\x02\x03\x04\x05\x06\x07\x08")
+    fake_backend = FakeCanBackend(
+        [CanFrame(RESP_READY_ACK, b""), CanFrame(RESP_READY_ACK, b""), CanFrame(39, b"")]
+    )
+    import flasher.cli as cli_mod
+
+    monkeypatch.setattr(cli_mod, "SocketCanBackend", lambda channel, baud: fake_backend)
+
+    main(["--backend", "socketcan", "--port", "can0", "--baud", "1000000", str(fw)])
+
+    out = capsys.readouterr().out
+    assert "entering bootloader" in out
+    assert "progress 1/1" in out
+    assert "CRC32 0x" in out
+
+
+def test_main_verbose_prints_every_frame_sent_and_received(capsys, tmp_path, monkeypatch):
+    fw = tmp_path / "fw.bin"
+    fw.write_bytes(b"\x01\x02\x03\x04\x05\x06\x07\x08")
+    fake_backend = FakeCanBackend(
+        [CanFrame(RESP_READY_ACK, b""), CanFrame(RESP_READY_ACK, b""), CanFrame(39, b"")]
+    )
+    import flasher.cli as cli_mod
+
+    monkeypatch.setattr(cli_mod, "SocketCanBackend", lambda channel, baud: fake_backend)
+
+    code = main(["--backend", "socketcan", "--port", "can0", "--baud", "1000000", "--verbose", str(fw)])
+
+    assert code == 0
+    out = capsys.readouterr().out
+    assert "tx id=0x2" in out
+    assert "rx id=0x7FE" in out
+
+
+def test_main_without_verbose_prints_no_frame_lines(capsys, tmp_path, monkeypatch):
+    fw = tmp_path / "fw.bin"
+    fw.write_bytes(b"\x01\x02\x03\x04\x05\x06\x07\x08")
+    fake_backend = FakeCanBackend(
+        [CanFrame(RESP_READY_ACK, b""), CanFrame(RESP_READY_ACK, b""), CanFrame(39, b"")]
+    )
+    import flasher.cli as cli_mod
+
+    monkeypatch.setattr(cli_mod, "SocketCanBackend", lambda channel, baud: fake_backend)
+
+    main(["--backend", "socketcan", "--port", "can0", "--baud", "1000000", str(fw)])
+
+    assert "rx id=" not in capsys.readouterr().out

@@ -31,6 +31,9 @@ flash --config flash.toml firmware.bin
 `--backend` is always required. CLI flags override values from
 `--config` when both are given.
 
+Flashing prints each stage, the CRC and chunk count, and a progress line
+per chunk. Add `--verbose` to also print every CAN frame sent and received.
+
 ## Configuration file
 
 Copy `flash.toml.example` to `flash.toml` and adjust:
