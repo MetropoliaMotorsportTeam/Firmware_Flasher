@@ -1,7 +1,7 @@
 <h1 align="center">Firmware Flasher</h1>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/version-0.1.0-2b6cb0?style=flat-square" alt="version">
+  <img src="https://img.shields.io/badge/version-0.2.0-2b6cb0?style=flat-square" alt="version">
   <img src="https://img.shields.io/badge/python-3.11%2B-4a5568?style=flat-square" alt="python">
 </p>
 
